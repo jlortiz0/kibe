@@ -4,6 +4,7 @@ import io.github.lucaargolo.kibe.items.POCKET_TRASH_CAN
 import io.github.lucaargolo.kibe.items.getContainerInfo
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.inventory.Inventories
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
@@ -29,37 +30,53 @@ class PocketTrashCanScreenHandler(syncId: Int, playerInventory: PlayerInventory,
         }
 
         override fun setStack(slot: Int, stack: ItemStack?) {
-            inventory[slot] = ItemStack.EMPTY
+            inventory[0] = stack
         }
 
         override fun isEmpty() = inventory.all { it.isEmpty }
 
         override fun removeStack(slot: Int, amount: Int): ItemStack {
-            return ItemStack.EMPTY
+            return if (slot == 1) {
+                Inventories.splitStack(inventory, 0, amount)
+            } else {
+                ItemStack.EMPTY
+            }
         }
 
         override fun removeStack(slot: Int): ItemStack {
-            return ItemStack.EMPTY
+            return if (slot == 1) {
+                Inventories.removeStack(inventory, 0)
+            } else {
+                ItemStack.EMPTY
+            }
         }
 
         override fun getStack(slot: Int): ItemStack {
-            return ItemStack.EMPTY
+            return if (slot == 1) {
+                inventory[0]
+            } else {
+                ItemStack.EMPTY
+            }
         }
 
         override fun canPlayerUse(player: PlayerEntity?): Boolean {
             return true
         }
 
-        override fun size() = inventory.size
+        override fun size() = 2
 
+        override fun onClose(player: PlayerEntity?) {
+            clear()
+        }
     }
 
     init {
-        checkSize(synchronizedInventory, 1)
+        checkSize(synchronizedInventory, 2)
         synchronizedInventory.onOpen(playerInventory.player)
         val i: Int = (3 - 4) * 18
 
-        addSlot(Slot(synchronizedInventory, 0, 8 + 4*18,  36))
+        addSlot(Slot(synchronizedInventory, 0, -36727,  -36727))
+        addSlot(Slot(synchronizedInventory, 1, 8 + 4*18,  36))
 
         (0..2).forEach {n ->
             (0..8).forEach { m ->
@@ -97,6 +114,11 @@ class PocketTrashCanScreenHandler(syncId: Int, playerInventory: PlayerInventory,
             }
         }
         return itemStack
+    }
+
+    override fun close(player: PlayerEntity?) {
+        super.close(player)
+        synchronizedInventory.onClose(player)
     }
 
 }

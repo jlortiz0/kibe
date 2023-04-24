@@ -62,7 +62,8 @@ class TrashCanScreenHandler(syncId: Int, playerInventory: PlayerInventory, val e
         inventory.onOpen(playerInventory.player)
         val i: Int = (3 - 4) * 18
 
-        addSlot(Slot(inventory, 0, 8 + 4*18,  36))
+        addSlot(Slot(inventory, 0, -36727,  -36727))
+        addSlot(Slot(inventory, 1, 8 + 4*18,  36))
 
         (0..2).forEach {n ->
             (0..8).forEach { m ->
