@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.Slot
+import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.Hand
 import net.minecraft.util.collection.DefaultedList
 import net.minecraft.world.World
@@ -121,4 +122,10 @@ class PocketTrashCanScreenHandler(syncId: Int, playerInventory: PlayerInventory,
         synchronizedInventory.onClose(player)
     }
 
+    override fun onSlotClick(slotIndex: Int, button: Int, actionType: SlotActionType?, player: PlayerEntity?) {
+        if (!cursorStack.isEmpty && slotIndex == 1 && actionType == SlotActionType.PICKUP && (button == 0 || button == 1)) {
+            synchronizedInventory.removeStack(1)
+        }
+        super.onSlotClick(slotIndex, button, actionType, player)
+    }
 }

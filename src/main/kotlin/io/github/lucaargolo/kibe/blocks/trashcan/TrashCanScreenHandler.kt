@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.screen.slot.Slot
+import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
@@ -55,6 +56,10 @@ class TrashCanScreenHandler(syncId: Int, playerInventory: PlayerInventory, val e
         override fun clear() {
             entity.clear()
         }
+
+        override fun onClose(player: PlayerEntity?) {
+            clear()
+        }
     }
 
     init {
@@ -82,6 +87,18 @@ class TrashCanScreenHandler(syncId: Int, playerInventory: PlayerInventory, val e
             addSlot(Slot(playerInventory, n, 8 + n * 18, 161 + i))
         }
 
+    }
+
+    override fun close(player: PlayerEntity?) {
+        super.close(player)
+        inventory.onClose(player)
+    }
+
+    override fun onSlotClick(slotIndex: Int, button: Int, actionType: SlotActionType?, player: PlayerEntity?) {
+        if (!cursorStack.isEmpty && slotIndex == 1 && actionType == SlotActionType.PICKUP && (button == 0 || button == 1)) {
+            inventory.removeStack(1)
+        }
+        super.onSlotClick(slotIndex, button, actionType, player)
     }
 
     override fun canUse(player: PlayerEntity): Boolean {
