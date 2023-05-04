@@ -77,11 +77,7 @@ class TrashCanEntity(trashCan: TrashCan, pos: BlockPos, state: BlockState): Lock
     }
 
     override fun getAvailableSlots(side: Direction?): IntArray {
-        return if (side == Direction.UP) {
-            IntArray(1) { 2 }
-        } else {
-            IntArray(0)
-        }
+        return IntArray(1) { 2 }
     }
 
     override fun canExtract(slot: Int, stack: ItemStack?, dir: Direction?): Boolean {
